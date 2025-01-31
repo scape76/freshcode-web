@@ -1,0 +1,46 @@
+.support {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 4.8em 8.8em 4.8em;
+    text-align: center;
+}
+
+.support_title {
+    font-size: 3.3em;
+    text-transform: uppercase;
+}
+
+.support_description {
+    font-size: 1.1em;
+    color: var(--aqua);
+    margin-top: 0.83em;
+}
+
+.support_goal {
+    font-size: 1.5em;
+    margin-top: 2.2em;
+}
+
+.support_number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2em;
+    margin-bottom: 0.5em;
+    font-size: 4em;
+}
+
+.support_number hr {
+    height: 1.2em;
+    width: 2px;
+    border: none;
+    background-color: #9ad2de;
+    margin: 0;
+}
+
+.support_number span {
+    display: inline-block;
+    min-width: 2ch;
+    text-align: center;
+}

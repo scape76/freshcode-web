@@ -1,0 +1,33 @@
+.work {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 70px 160px 70px;
+    gap: 4em;
+}
+
+.work-card {
+    display: flex;
+    align-items: center;
+    gap: 3em;
+    padding: 2.4em 3.4em;
+    background-color: var(--sky);
+}
+
+.work_title {
+    text-transform: uppercase;
+    font-weight: 400;
+    font-size: 3em;
+}
+
+.work_description {
+    margin-top: 0.5em;
+    font-size: 1.2em;
+}
+
+.work_image {
+    flex-shrink: 0;
+    width: 50%;
+    /* width: 40.625vw; */
+    height: auto;
+}

@@ -1,0 +1,22 @@
+.mission {
+    padding: 22vw 5em 12em 5em;
+}
+
+.mission_container {
+    display: flex;
+    position: relative;
+    padding: 5em 3.5em;
+    background-color: #f1fdff;
+}
+
+.mission_title {
+    font-size: 1.5em;
+    width: 50%;
+}
+
+.mission_image {
+    position: absolute;
+    bottom: 0;
+    right: -40px;
+    width: 55%;
+}

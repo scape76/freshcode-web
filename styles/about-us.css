@@ -1,0 +1,19 @@
+.about-us {
+    padding: 218px 160px;
+    text-align: center;
+}
+
+.about-us_title {
+    text-wrap: balance;
+    text-transform: uppercase;
+    font-size: 4em;
+}
+
+.about-us_subtitle {
+    font-size: 2em;
+}
+
+.about-us_description {
+    font-size: 1.2em;
+    color: var(--aqua);
+}

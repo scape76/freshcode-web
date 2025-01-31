@@ -1,0 +1,86 @@
+.contacts {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3em;
+    padding: 3em 4em 9em;
+    background-color: var(--cream);
+}
+
+.contacts__info {
+    display: flex;
+    justify-content: space-between;
+    gap: 6em;
+    width: 100%;
+}
+
+.contacts__title {
+    width: 50%;
+    font-size: 3.5em;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.contacts__details {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 3em;
+}
+
+.contacts__group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.contacts__messenger {
+    display: flex;
+    gap: 1em;
+}
+
+.contacts__icon {
+    --size: 1.8em;
+    width: var(--size);
+    heigh: var(--size);
+}
+
+.contacts__text {
+    font-size: 1.2em;
+    line-height: 1.4;
+}
+
+.contacts__newsletter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6em;
+    width: 100%;
+    padding: 4em;
+    background-color: white;
+}
+
+.contacts__image {
+    width: 50%;
+}
+
+.contacts__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.7em;
+    width: 50%;
+}
+
+.contacts__form-title {
+    font-size: 1.5em;
+}
+
+.contacts__input {
+    padding: 1.4em 2.4em;
+    border-radius: 50px;
+    background-color: var(--cream);
+}
+
+.contacts__input:focus-visible {
+    outline: 1px solid var(--aqua);
+}
