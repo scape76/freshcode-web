@@ -92,6 +92,12 @@
     background-color: var(--cream);
 }
 
+textarea.contacts__input {
+    min-height: 150px;
+    border-radius: 25px;
+    resize: vertical;
+}
+
 .contacts__input:focus-visible {
     outline: 1px solid var(--aqua);
 }

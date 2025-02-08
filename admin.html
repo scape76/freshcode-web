@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Фонд Підтримки</title>
+    <style>
+        :root {
+            --primary: #7ae5fd;
+            --aqua: #73a6b1;
+            --sky: #f1fdff;
+            --cream: #f9fadf;
+        }
+
+        body {
+            font-family: "Montserrat", sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--sky);
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            opacity: 0;
+            animation: slideUp 0.5s ease-out forwards;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            color: var(--aqua);
+            font-weight: bold;
+        }
+
+        .subscribers-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .subscriber-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: slideUp 0.5s ease-out forwards;
+        }
+
+        .subscriber-info {
+            flex-grow: 1;
+        }
+
+        .subscriber-email {
+            color: var(--aqua);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .subscriber-message {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .subscriber-date {
+            font-size: 0.9em;
+            color: #999;
+        }
+
+        .subscriber-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-delete {
+            background-color: #ff4444;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background-color: #cc0000;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats {
+                flex-direction: column;
+            }
+        }
+
+        .email-form {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: slideUp 0.5s ease-out forwards;
+        }
+
+        .mass-email-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .email-input, .email-textarea {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: inherit;
+        }
+
+        .email-textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .btn-send {
+            background-color: var(--primary);
+            color: black;
+            font-weight: 500;
+            padding: 12px 24px;
+            align-self: flex-start;
+        }
+
+        .btn-send:hover {
+            background-color: var(--aqua);
+            color: white;
+        }
+
+        .btn-send:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <h1>Панель адміна</h1>
+            <a href="/" class="btn">На головну</a>
+        </header>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalSubscribers">0</div>
+                <div>Всього підписників</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="todaySubscribers">0</div>
+                <div>Нових сьогодні</div>
+            </div>
+        </div>
+
+        <div class="email-form">
+            <h2>Надіслати розсилку</h2>
+            <form id="massEmailForm" class="mass-email-form">
+                <input
+                    type="text"
+                    id="emailSubject"
+                    placeholder="Тема листа"
+                    required
+                    class="email-input"
+                >
+                <textarea
+                    id="emailContent"
+                    placeholder="Текст повідомлення"
+                    required
+                    class="email-textarea"
+                ></textarea>
+                <button type="submit" class="btn btn-send">
+                    Надіслати всім
+                    <span class="subscriber-count"></span>
+                </button>
+            </form>
+        </div>
+
+        <div class="subscribers-grid" id="subscribersList">
+            <!-- subscribers will be rendered here -->
+        </div>
+    </div>
+
+    <script>
+        async function loadSubscribers() {
+            try {
+                const response = await fetch('/api/subscribers');
+                const subscribers = await response.json();
+
+                const subscribersList = document.getElementById('subscribersList');
+                document.getElementById('totalSubscribers').textContent = subscribers.length;
+
+                const today = new Date().toDateString();
+                const todayCount = subscribers.filter(sub =>
+                    new Date(sub.created_at).toDateString() === today
+                ).length;
+                document.getElementById('todaySubscribers').textContent = todayCount;
+
+                subscribersList.innerHTML = subscribers.map((sub, index) => `
+                    <div class="subscriber-card" style="animation-delay: ${index * 0.1}s">
+                        <div class="subscriber-info">
+                            <div class="subscriber-email">${sub.email}</div>
+                            <div class="subscriber-message">${sub.message || 'Без повідомлення'}</div>
+                            <div class="subscriber-date">${new Date(sub.created_at).toLocaleString('uk-UA')}</div>
+                        </div>
+                        <div class="subscriber-actions">
+                            <button class="btn btn-delete" onclick="deleteSubscriber(${sub.id})">Видалити</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Failed to load subscribers:', error);
+            }
+        }
+
+        async function deleteSubscriber(id) {
+            if (!confirm('Ви впевнені, що хочете видалити цього підписника?')) return;
+
+            try {
+                const response = await fetch(`/api/subscribers/${id}`, {
+                    method: 'DELETE'
+                });
+
+                // htmx ahh moment
+                if (response.ok) {
+                    loadSubscribers();
+                } else {
+                    alert('Помилка при видаленні підписника');
+                }
+            } catch (error) {
+                console.error('Failed to delete subscriber:', error);
+                alert('Помилка при видаленні підписника');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadSubscribers);
+
+        // Add email sending functionality
+        const massEmailForm = document.getElementById('massEmailForm');
+
+        massEmailForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitButton = massEmailForm.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Відправляється...';
+
+            const emailData = {
+                subject: document.getElementById('emailSubject').value,
+                content: document.getElementById('emailContent').value
+            };
+
+            try {
+                const response = await fetch('/api/send-mass-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(emailData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Розсилку успішно відправлено!');
+                    massEmailForm.reset();
+                } else {
+                    alert(result.error || 'Помилка при відправці розсилки');
+                }
+            } catch (error) {
+                console.error('Failed to send mass email:', error);
+                alert('Помилка при відправці розсилки');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Надіслати всім';
+            }
+        });
+    </script>
+</body>
+</html>

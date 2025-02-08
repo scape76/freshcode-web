@@ -9,7 +9,7 @@
     <body>
         <header class="header container">
             <a href="/" class="header__logo">
-                <img src="public/logo.svg" alt="Logo" />
+                <img src="./public/logo.svg" alt="Logo" />
             </a>
             <div class="header__burger">
                 <span></span>
@@ -171,25 +171,22 @@
                     alt="Envelope illustration"
                     class="contacts__image"
                 />
-                <form class="contacts__form">
+                <form class="contacts__form" id="contactForm">
                     <h3 class="contacts__form-title">
-                        Щоб дізнаватися усі новини фестивалю, підпишися на нашу
-                        розсилку
+                        Підпишіться на нашу розсилку
                     </h3>
                     <input
-                        required
-                        placeholder="Ім'я"
-                        type="text"
-                        class="contacts__input"
-                        name="name"
-                    />
-                    <input
-                        required
-                        placeholder="Емейл"
                         type="email"
                         class="contacts__input"
+                        placeholder="Email"
+                        required
                         name="email"
                     />
+                    <textarea
+                        class="contacts__input"
+                        placeholder="Повідомлення"
+                        name="message"
+                    ></textarea>
                     <button type="submit" class="btn btn-blue">
                         Підписатися
                     </button>
@@ -241,6 +238,39 @@
                         body.style.overflow = '';
                     });
                 });
+            });
+
+            const contactForm = document.getElementById('contactForm');
+
+            contactForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const formData = new FormData(contactForm);
+                const data = {
+                    email: formData.get('email'),
+                    message: formData.get('message')
+                };
+
+                try {
+                    const response = await fetch('/api/contact', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        alert('Дякуємо за підписку!');
+                        contactForm.reset();
+                    } else {
+                        alert(result.error || 'Щось пішло не так. Спробуйте ще раз.');
+                    }
+                } catch (error) {
+                    alert('Помилка при відправці форми. Спробуйте ще раз.');
+                }
             });
         </script>
     </body>
