@@ -8,6 +8,7 @@
 @import url("./mission.css");
 @import url("./support.css");
 @import url("./contacts.css");
+@import url("./animations.css");
 
 :root {
     --primary: #7ae5fd;
@@ -36,4 +37,29 @@ html {
 
 .btn-blue {
     background-color: var(--primary);
+}
+
+@media (max-width: 1024px) {
+    :root {
+        --header-height: 100px;
+    }
+
+    html {
+        font-size: 14px;
+    }
+
+    .container {
+        width: 100%;
+        padding: 0 2em;
+    }
+
+    .btn {
+        padding: 1.2em 2em;
+    }
+}
+
+@media (max-width: 768px) {
+    html {
+        font-size: 12px;
+    }
 }

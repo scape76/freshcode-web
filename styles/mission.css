@@ -20,3 +20,32 @@
     right: -40px;
     width: 55%;
 }
+
+@media (max-width: 1024px) {
+    .mission {
+        padding: 160px 3em 8em 3em;
+    }
+}
+
+@media (max-width: 768px) {
+    .mission {
+        padding: 80px 1.5em 4em 1.5em;
+    }
+
+    .mission_container {
+        flex-direction: column;
+        padding: 2em;
+    }
+
+    .mission_title {
+        width: 100%;
+        text-align: center;
+    }
+
+    .mission_image {
+        position: relative;
+        right: 0;
+        width: 100%;
+        margin-top: 2em;
+    }
+}

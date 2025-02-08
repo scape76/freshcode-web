@@ -11,6 +11,11 @@
             <a href="/" class="header__logo">
                 <img src="public/logo.svg" alt="Logo" />
             </a>
+            <div class="header__burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
             <nav>
                 <ul class="header__menu">
                     <li>
@@ -191,5 +196,52 @@
                 </form>
             </div>
         </footer>
+        <script>
+            const header = document.querySelector('.header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 100) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
+            function handleScrollAnimations() {
+                const elements = document.querySelectorAll('.work-card');
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                elements.forEach(element => observer.observe(element));
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                handleScrollAnimations();
+
+                const burger = document.querySelector('.header__burger');
+                const nav = document.querySelector('nav');
+                const body = document.body;
+
+                burger.addEventListener('click', () => {
+                    burger.classList.toggle('active');
+                    nav.classList.toggle('active');
+                    body.style.overflow = nav.classList.contains('active') ? 'hidden' : '';
+                });
+
+                const menuLinks = document.querySelectorAll('.header__menu a');
+                menuLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        burger.classList.remove('active');
+                        nav.classList.remove('active');
+                        body.style.overflow = '';
+                    });
+                });
+            });
+        </script>
     </body>
 </html>

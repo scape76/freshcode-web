@@ -12,6 +12,14 @@
     gap: 3em;
     padding: 2.4em 3.4em;
     background-color: var(--sky);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease-out;
+}
+
+.work-card.visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .work_title {
@@ -30,4 +38,31 @@
     width: 50%;
     /* width: 40.625vw; */
     height: auto;
+    transition: transform 0.3s ease;
+}
+
+.work-card:hover .work_image {
+    transform: scale(1.02);
+}
+
+@media (max-width: 1024px) {
+    .work {
+        padding: 0 30px 80px 30px;
+    }
+
+    .work-card {
+        padding: 2em;
+    }
+}
+
+@media (max-width: 768px) {
+    .work-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .work_image {
+        width: 100%;
+        order: -1;
+    }
 }
