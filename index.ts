@@ -1,19 +1,12 @@
 import Landing from './index.html';
 import AdminPanel from './admin.html';
+import LoginPage from './login.html';
 
-import { Database } from "bun:sqlite";
 import nodemailer from 'nodemailer';
+import { db } from './db';
+import './seed';
+import { file } from 'bun';
 
-const db = new Database("contacts.sqlite");
-
-db.run(`
-  CREATE TABLE IF NOT EXISTS contacts (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    email TEXT NOT NULL,
-    message TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )
-`);
 
 const emailConfig = {
     service: 'gmail',
@@ -25,10 +18,16 @@ const emailConfig = {
 
 const transporter = nodemailer.createTransport(emailConfig);
 
+type Admin = {
+    id: number;
+    username: string;
+    password: string;
+};
+
 Bun.serve({
   static: {
     "/": Landing,
-    "/admin": AdminPanel
+    "/login": LoginPage
   },
   async fetch(req) {
     const url = new URL(req.url);
@@ -37,6 +36,27 @@ Bun.serve({
       return new Response(Landing, {
         headers: { "Content-Type": "text/html" },
       });
+    }
+
+    if (url.pathname === "/login") {
+      return new Response(Bun.file("login.html"), {
+        headers: { "Content-Type": "text/html" },
+      });
+    }
+
+    if (url.pathname === "/api/login") {
+      return handlers.handleLogin(req);
+    }
+
+    if (url.pathname === "/admin") {
+      if (!handlers.checkAuth(req)) {
+        return new Response(null, {
+          status: 302,
+          headers: { "Location": "/login" }
+        });
+      }
+
+      return new Response(file('./admin.html'));
     }
 
     switch (url.pathname) {
@@ -188,6 +208,50 @@ const handlers = {
         }
       );
     }
+  },
+
+  handleLogin: async (req: Request) => {
+    try {
+      const { username, password } = await req.json();
+
+      if (!username || !password) {
+        return new Response(JSON.stringify({ error: "Username and password are required" }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+
+      const admin = db.prepare("SELECT * FROM admins WHERE username = ?").get(username) as Admin | undefined;
+
+      if (!admin || admin.password !== password) {
+        return new Response(JSON.stringify({ error: "Invalid credentials" }), {
+          status: 401,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+
+      const sessionToken = Math.random().toString(36).substring(2);
+
+      return new Response(JSON.stringify({ success: true }), {
+        headers: {
+          "Content-Type": "application/json",
+          "Set-Cookie": `session=${sessionToken}; Path=/; HttpOnly`
+        },
+      });
+    } catch (error) {
+      return new Response(JSON.stringify({ error: "Login failed" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+  },
+
+  checkAuth: (req: Request) => {
+    const cookie = req.headers.get('cookie');
+    if (!cookie?.includes('session=')) {
+      return false;
+    }
+    return true;
   },
 
   handleNotFound: () => {
